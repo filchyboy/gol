@@ -27,7 +27,7 @@ class LinkedList:
         self.head = None
         self.tail = None
 
-    def add_to_head(self, value, cell_x, cell_y):
+    def add_to_head(self, value):
         new_node = Node(value)
         if not self.head and not self.tail:
             self.head = new_node
@@ -36,7 +36,7 @@ class LinkedList:
             new_node.set_next(self.head)
             self.head = new_node
 
-    def append(self, value, cell_x, cell_y):
+    def append(self, value):
         new_node = Node(value)
         cur_node = self.head
         while cur_node.next_node is not None:

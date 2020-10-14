@@ -46,11 +46,7 @@ grid_list = LinkedList()
 # 
 
 for i in range(list_length):
-    grid_list.add_to_head(grid_values[i],
-                          cell_x + i % side,
-                          cell_y - i//side)
-    print(grid_values[i], cell_x + i % side,
-                          cell_y - i//side)
+    grid_list.add_to_head([grid_values[i], cell_x + i % side, cell_y - i//side])
 
 grid_list.reverse()
 print("Length list:", grid_list.length())
