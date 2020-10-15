@@ -4,7 +4,14 @@ import numpy as np
 import math
 from numpy.random import seed
 from numpy.random import randint
-from classes import Cell, Node, LinkedList
+import mysql.connector
+from mysql.connector import Error
+from dotenv import load_dotenv
+import os
+
+# Set function to protect secrets
+load_dotenv()
+MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 
 # Set instance parameters
 # Currently the seed is just set to an instance.
@@ -18,7 +25,7 @@ from classes import Cell, Node, LinkedList
 # number
 
 seed(1)
-length = 101
+length = 10001
 
 # Grid_values sets the list as containing 1 or 0
 # with an initial list length of the preceding
@@ -38,16 +45,32 @@ side = int(length//math.sqrt(length))
 cell_x = 0
 cell_y = 0
 list_length = side * side
+series = 1
 
-# Call the class instance for a linkedlist
+connection = mysql.connector.connect(host='localhost',
+                                    database='game_of_life_data',
+                                    user='root',
+                                    password=MYSQL_PASSWORD)
+cursor = connection.cursor()
 
-grid_list = LinkedList()
+def close_db():    
+    if (connection.is_connected()):
+        cursor.close()
+        connection.close()
 
-# 
-
+values_for_insertion = []
 for i in range(list_length):
-    grid_list.add_to_head([grid_values[i], cell_x + i % side, cell_y - i//side])
+    values_for_insertion.append((series, list_length, side, int(grid_values[i]), int(cell_x + i % side), int(cell_y - i//side), 
+                           int((cell_x + i % side) + 1), int(cell_y - i//side), 
+                           int((cell_x + i % side) + 1), int((cell_y - i//side) - 1),
+                           int(cell_x + i % side), int((cell_y - i//side) - 1),
+                           int((cell_x + i % side) - 1), int((cell_y - i//side) - 1),
+                           int((cell_x + i % side) - 1), int((cell_y - i//side)),
+                           int((cell_x + i % side) - 1), int((cell_y - i//side) + 1),
+                           int((cell_x + i % side)), int((cell_y - i//side) + 1),
+                           int((cell_x + i % side) + 1), int((cell_y - i//side) + 1)))
 
-grid_list.reverse()
-print("Length list:", grid_list.length())
-print("Complete list:", grid_list.display())
+sql = "INSERT INTO GOL_data (Series, Length, Side, Node_Value, Node_X, Node_Y, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, x6, y6, x7, y7, x8, y8) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+cursor.executemany(sql, values_for_insertion)
+connection.commit()
