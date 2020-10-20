@@ -25,7 +25,7 @@ MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 # number
 
 seed(1)
-length = 10001
+length = 101
 
 # Grid_values sets the list as containing 1 or 0
 # with an initial list length of the preceding
