@@ -24,6 +24,7 @@ df = pd.DataFrame(columns=column_names)
 # Call db locally to retrieve initial seed and pour it into 
 # the previously constructed dataframe.
 def retrieve_seed():
+  global df
   connection = mysql.connector.connect(host='localhost',
                                       database='game_of_life_data',
                                       user='root',
@@ -57,10 +58,13 @@ grid = []
 # Node list is the dictionary of values for the initial seed
 # with keys of the x & y coordinates of each cell node
 node_list = {}
-
+# Node DF is the array 
 node_df = []
-field_of_grid = []
+
+#
 reproduction_list = []
+
+#
 count = 0
 
 # Here the initial dataframe is peeled out and placed into the grid
@@ -79,17 +83,9 @@ for i in range(len(df)):
     node_list[str([df['Node_X'][i], df['Node_Y'][i]])] = df['Node_Value'][i]
     node_df.append([[df['Node_X'][i], df['Node_Y'][i]], df['Node_Value'][i]])
 
-field_of_grid = df
 original_seed = df['Node_Value']
-df = df.drop(['Series', 'Length', 'Side', 'Node_Value', 'Node_X', 'Node_Y'], 1)
 
-field_of_grid = np.array(df)
 num = len(grid)
-
-grid_df = pd.DataFrame(data=grid, columns=['i', 'series', 'length', 'side',
-                                           'value', 'x', 'y', 'n1', 'n2', 'n3',
-                                           'n4', 'n5', 'n6', 'n7', 'n8']
-                       )
 
 
 def search_eight(x, y):
@@ -107,17 +103,15 @@ def search_eight(x, y):
         node_growth = str(node_df[each][1])
         for i in range(9 - 1):
             count = count + node_list.get(str(grid[each][i + 7]), 0)
-    if count <= 1:
-        node_growth = 0
-    if count == 2 or 3:
-        node_growth = 1
-    if count >= 4:
-        node_growth = 0
-    count = 0
+        if count <= 1:
+          node_growth = 0
+        if count == 2 or 3:
+          node_growth = 1
+        if count >= 4:
+          node_growth = 0
+        count = 0
 
-    reproduction_list.append(node_growth)
-
-
+        reproduction_list.append(node_growth)
 
 
 def parse_grid(arr):
