@@ -74,21 +74,19 @@ Any live cell with more than three live neighbours dies, as if by overpopulation
 Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
   '''
-  global count, reproduction_list
+  global count, reproduction_list, original_seed
   for each in range(len(node_df)):
     node_growth = str(node_df[each][1])
-    # print("First Loop", str(node_df[each][0]), str(node_df[each][1]))
     for i in range(9 - 1):
       count = count + node_list.get(str(grid[each][i + 7]), 0)
-      # print(str(grid[each][i + 7]), node_list.get(str(grid[each][i + 7]), 0), "Count:", count)
-      print([node_list.get(str(grid[each][i + 7]), 0)])
+      original_seed.append([node_list.get(str(grid[each][i + 7]), 0)])
     if count <= 1: node_growth = 0
     if count == 2 or 3: node_growth = 1
     if count >= 4: node_growth = 0
     count = 0
 
     reproduction_list.append(node_growth)
-
+original_seed = []
 reproduction_list = []
 count = 0
 num = len(grid)
@@ -102,3 +100,14 @@ def parse_grid(arr):
     # parse_grid(grid)
 
 parse_grid(grid)
+
+print(type(original_seed[0][0]))
+
+# values_for_insertion = []
+# for i in range(len(original_seed)):
+#     values_for_insertion.append((series, list_length, side, original_seed[][0]))
+
+# sql = "INSERT INTO GOL_data (Series, Length, Side, Node_Value, Node_X, Node_Y, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, x6, y6, x7, y7, x8, y8) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+# cursor.executemany(sql, values_for_insertion)
+# connection.commit()
