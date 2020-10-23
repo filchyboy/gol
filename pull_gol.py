@@ -12,19 +12,25 @@ import pandas as pd
 load_dotenv()
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 
-# Create dataframe for seed to game of life
-# This data was derived from gol/grid/generator.py
-# TODO make this initial seed selectable
-column_names = ["Series", "Length", "Side", "Node_Value",
-                "Node_X", "Node_Y", "x1", "y1", "x2", "y2",
-                "x3", "y3", "x4", "y4", "x5", "y5", "x6",
-                "y6", "x7", "y7", "x8", "y8"]
-df = pd.DataFrame(columns=column_names)
 
-# Call db locally to retrieve initial seed and pour it into 
-# the previously constructed dataframe.
+# Pulls initial seed from db
 def retrieve_seed():
-  global df
+  '''
+  Create dataframe for seed to game of life
+  This data was derived from gol/grid/generator.py
+  TODO make this initial seed selectable
+  Call db locally to retrieve initial seed and pour it into 
+  the previously constructed dataframe.
+
+  '''
+  global df, df_meta, original_seed
+
+  column_names = ["Series", "Length", "Side", "Node_Value",
+                  "Node_X", "Node_Y", "x1", "y1", "x2", "y2",
+                  "x3", "y3", "x4", "y4", "x5", "y5", "x6",
+                  "y6", "x7", "y7", "x8", "y8"]
+  df = pd.DataFrame(columns=column_names)
+  
   connection = mysql.connector.connect(host='localhost',
                                       database='game_of_life_data',
                                       user='root',
@@ -42,90 +48,79 @@ def retrieve_seed():
                       'y4': y4, 'x5': x5, 'y5': y5, 'x6': x6,
                       'y6': y6, 'x7': x7, 'y7': y7, 'x8': x8,
                       'y8': y8}, ignore_index=True)
+  df_meta = pd.DataFrame(columns=["Series", "Length", "Side"])
+  df_meta = df_meta.append({'Series': df['Series'][0], 'Length': df['Length'][0], 'Side': df['Side'][0]}, ignore_index=True)
+  original_seed = df['Node_Value']
 
-# Initiate seed retrieval
+# Initiate seed retrieval from db
 retrieve_seed()
 
-# Set up meta information about the series
-# This will be stored in a different table
-df_meta = pd.DataFrame(columns=["Series", "Length", "Side"])
-df_meta = df_meta.append({'Series': df['Series'][0], 'Length': df['Length'][0], 'Side': df['Side'][0]}, ignore_index=True)
 
-# Establish arrays & dict to enable search through the seed
-# Grid is a straight up array of all the dataframe contents
-grid = []
+def build_grid():
+  '''
+  Here the initial dataframe is peeled out and placed into the grid
+  array, and the node_list dictionary is populated, and the node_df
+  array is populated. TODO node_df & node_list are redundant; one is
+  an array and one is a dictionary. They derive from 2 different
+  attempts at this build. I'll need to remove the array: node_df in a
+  future re-factoring
 
-# Node list is the dictionary of values for the initial seed
-# with keys of the x & y coordinates of each cell node
-node_list = {}
-# Node DF is the array 
-node_df = []
-
-#
-reproduction_list = []
-
-#
-count = 0
-
-# Here the initial dataframe is peeled out and placed into the grid
-# array, and the node_list dictionary is populated, and the node_df
-# array is populated. TODO node_df & node_list are redundant; one is
-# an array and one is a dictionary. They derive from 2 different
-# attempts at this build. I'll need to remove the array: node_df in a
-# future re-factoring
-for i in range(len(df)):
-    grid.append([i, df['Series'][i], df['Length'][i], df['Side'][i],
-                df['Node_Value'][i], df['Node_X'][i], df['Node_Y'][i],
-                [df['x1'][i], df['y1'][i]], [df['x2'][i], df['y2'][i]],
-                [df['x3'][i], df['y3'][i]], [df['x4'][i], df['y4'][i]],
-                [df['x5'][i], df['y5'][i]], [df['x6'][i], df['y6'][i]],
-                [df['x7'][i], df['y7'][i]], [df['x8'][i], df['y8'][i]]])
-    node_list[str([df['Node_X'][i], df['Node_Y'][i]])] = df['Node_Value'][i]
-    node_df.append([[df['Node_X'][i], df['Node_Y'][i]], df['Node_Value'][i]])
-
-original_seed = df['Node_Value']
-
-num = len(grid)
+  '''
+  global df, grid, node_list, node_df, num
+  grid = []
+  node_list = {}
+  node_df = []
+  num = 0
+  for i in range(len(df)):
+      grid.append([i, df['Series'][i], df['Length'][i], df['Side'][i],
+                  df['Node_Value'][i], df['Node_X'][i], df['Node_Y'][i],
+                  [df['x1'][i], df['y1'][i]], [df['x2'][i], df['y2'][i]],
+                  [df['x3'][i], df['y3'][i]], [df['x4'][i], df['y4'][i]],
+                  [df['x5'][i], df['y5'][i]], [df['x6'][i], df['y6'][i]],
+                  [df['x7'][i], df['y7'][i]], [df['x8'][i], df['y8'][i]]])
+      node_list[str([df['Node_X'][i], df['Node_Y'][i]])] = df['Node_Value'][i]
+      node_df.append([[df['Node_X'][i], df['Node_Y'][i]], df['Node_Value'][i]])
+  num = len(grid)
 
 
-def search_eight(x, y):
-    '''
-    Any live cell with fewer than two live neighbours dies,
-    as if by underpopulation. Any live cell with two or three
-    live neighbours lives on to the next generation. Any live cell
-    with more than three live neighbours dies, as if by overpopulation.
-    Any dead cell with exactly three live neighbours becomes a live cell,
-    as if by reproduction.
+def search_eight():
+  '''
+  Any live cell with fewer than two live neighbours dies,
+  as if by underpopulation. Any live cell with two or three
+  live neighbours lives on to the next generation. Any live cell
+  with more than three live neighbours dies, as if by overpopulation.
+  Any dead cell with exactly three live neighbours becomes a live cell,
+  as if by reproduction.
 
-    '''
-    global count, reproduction_list
-    for each in range(len(node_df)):
-        node_growth = str(node_df[each][1])
-        for i in range(9 - 1):
-            count = count + node_list.get(str(grid[each][i + 7]), 0)
-        if count <= 1:
-          node_growth = 0
-        if count == 2 or 3:
-          node_growth = 1
-        if count >= 4:
-          node_growth = 0
-        count = 0
-
-        reproduction_list.append(node_growth)
+  '''
+  global count, reproduction_list, num, node_df, grid
+  reproduction_list = []
+  count = 0
+  for each in range(len(node_df)):
+    node_growth = str(node_df[each][1])
+    for i in range(9 - 1):
+      count = count + node_list.get(str(grid[each][i + 7]), 0)
+      if count <= 1:
+        node_growth = 0
+      if count == 2 or 3:
+        node_growth = 1
+      if count >= 4:
+        node_growth = 0
+    reproduction_list.append(node_growth)
+    count = 0
 
 
 def parse_grid(arr):
-    global num
-    while num == 0:
-        return
-    else:
-        search_eight(grid[num - 1][5], grid[num - 1][6])
-        num -= (len(node_df) - 1)
+  global num, node_df, grid
+  while num == 0:
+    return
+  else:
+    search_eight()
+    num -= (len(node_df) - 1)
 
-
-parse_grid(grid)
 
 def insert_root():
+    global df_meta, original_seed
     connection = mysql.connector.connect(host='localhost',
                                          database='game_of_life_data',
                                          user='root', password=MYSQL_PASSWORD)
@@ -141,6 +136,7 @@ def insert_root():
     connection.close()
 
 def insert_generation():
+    global df_meta, reproduction_list
     connection = mysql.connector.connect(host='localhost',
                                          database='game_of_life_data',
                                          user='root', password=MYSQL_PASSWORD)
@@ -156,9 +152,10 @@ def insert_generation():
     connection.commit()
     connection.close()
 
-# insert_root()
-# insert_generation()
 
-print(reproduction_list)
+build_grid()
+parse_grid(grid)
 
 
+insert_root()
+insert_generation()
