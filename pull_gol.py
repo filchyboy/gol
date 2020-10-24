@@ -12,6 +12,9 @@ import pandas as pd
 load_dotenv()
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 
+# Set number of generations
+generations = 10
+
 
 # Pulls initial seed from db
 def retrieve_seed():
@@ -143,9 +146,41 @@ def insert_generation():
     connection.commit()
     connection.close()
 
+def grid_maker(reproduction_list):
+  grid = []
+  cell_x = 0
+  cell_y = 0
+  list_length = df_meta['Length'][0]
+  series = df_meta['Series'][0]
+  side = df_meta['Side'][0]
+  for i in range(list_length):
+      grid.append((series, list_length, side, int(reproduction_list[i]),
+                    int(cell_x + i % side), int(cell_y - i//side), 
+                    int((cell_x + i % side) + 1), int(cell_y - i//side), 
+                    int((cell_x + i % side) + 1), int((cell_y - i//side) - 1),
+                    int(cell_x + i % side), int((cell_y - i//side) - 1),
+                    int((cell_x + i % side) - 1), int((cell_y - i//side) - 1),
+                    int((cell_x + i % side) - 1), int((cell_y - i//side)),
+                    int((cell_x + i % side) - 1), int((cell_y - i//side) + 1),
+                    int((cell_x + i % side)), int((cell_y - i//side) + 1),
+                    int((cell_x + i % side) + 1), int((cell_y - i//side) + 1)))
+
+
+def generation_maker(generations):
+  while generations == 0:
+    break
+  else:
+    grid_maker(reproduction_list)
+    generation_maker(generations - 1)
+
+    insert_generation()
+    print(generations)
 
 build_grid()
 search_eight()
 
-insert_root()
-insert_generation()
+
+# insert_root()
+generation_maker(generations)
+
+print(len(grid))
