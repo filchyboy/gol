@@ -110,15 +110,6 @@ def search_eight():
     count = 0
 
 
-def parse_grid(arr):
-  global num, node_df, grid
-  while num == 0:
-    return
-  else:
-    search_eight()
-    num -= (len(node_df) - 1)
-
-
 def insert_root():
     global df_meta, original_seed
     connection = mysql.connector.connect(host='localhost',
@@ -154,8 +145,7 @@ def insert_generation():
 
 
 build_grid()
-parse_grid(grid)
-
+search_eight()
 
 insert_root()
 insert_generation()
