@@ -13,7 +13,7 @@ load_dotenv()
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 
 # Set number of generations
-generations = 1
+generations = 100000
 reproduction_list = []
 
 # Pulls initial seed from db
@@ -127,12 +127,12 @@ def search_eight():
     node_growth = str(node_df[each][1])
     for i in range(9 - 1):
       count = count + node_list.get(str(grid[each][i + 7]), 0)
-      if count <= 1:
-        node_growth = 0
-      if count == 2 or 3:
-        node_growth = 1
-      if count >= 4:
-        node_growth = 0
+    if count == 0 or count == 1:
+      node_growth = 0
+    if count == 2 or count == 3:
+      node_growth = 1
+    if count >= 4:
+      node_growth = 0
     reproduction_list.append(node_growth)
     count = 0
 
@@ -202,14 +202,14 @@ def kill_node():
   node_list = {}
   node_df = []
 
-print("Grid:\n\n\n", grid[4][4])
+# print("Grid:\n\n\n", grid[4][4])
 for i in range(generations):
     kill_node()
-    print("\n\n\n\n\n\n\n\n\n\n", grid[4][4])
+    # print("\n\n\n\n\n\n\n\n\n\n", grid[4][4])
     for j in range(len(grid)):
-      print("\n\n\nGrid[j][4]: ", grid[j][4], "\n\n\nReproduction List[j]: ", reproduction_list[j])
+      # print("\n\n\nGrid[j][4]: ", grid[j][4], "\n\n\nReproduction List[j]: ", reproduction_list[j])
       grid[j][4] = reproduction_list[j]
-      print("\n\n\nAdjusted Grid[j][4]: ", grid[j][4])
+      # print("\n\n\nAdjusted Grid[j][4]: ", grid[j][4])
       node_list[str([grid[j][5], grid[j][6]])] =  grid[j][4]
       node_df.append([[str([grid[j][5], grid[j][6]])], grid[j][4]])
 
