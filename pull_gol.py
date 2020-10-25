@@ -14,7 +14,7 @@ MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 
 # Set number of generations
 generations = 10
-
+reproduction_list = []
 
 # Pulls initial seed from db
 def retrieve_seed():
@@ -70,7 +70,6 @@ def build_grid():
 
   '''
   global df, grid, node_list, node_df, num
-  grid = []
   node_list = {}
   node_df = []
   num = 0
@@ -83,6 +82,31 @@ def build_grid():
                   [df['x7'][i], df['y7'][i]], [df['x8'][i], df['y8'][i]]])
       node_list[str([df['Node_X'][i], df['Node_Y'][i]])] = df['Node_Value'][i]
       node_df.append([[df['Node_X'][i], df['Node_Y'][i]], df['Node_Value'][i]])
+  num = len(grid)
+
+def make_new_frame():
+  '''
+  Here the initial dataframe is peeled out and placed into the grid
+  array, and the node_list dictionary is populated, and the node_df
+  array is populated. TODO node_df & node_list are redundant; one is
+  an array and one is a dictionary. They derive from 2 different
+  attempts at this build. I'll need to remove the array: node_df in a
+  future re-factoring
+
+  '''
+  global df_meta, reproduction_list, grid, node_list, node_df, num, list_length, series, side
+  node_list = {}
+  node_df = []
+  num = 0
+  for i in range(len(reproduction_list)):
+    # print(reproduction_list[i], reproduction_list[i + 1], reproduction_list[i + 3])
+      grid.append([i, series, list_length, side, grid[3], grid[4], grid[5],
+                  [reproduction_list[0], reproduction_list[1]], [reproduction_list[2], reproduction_list[3]],
+                  [reproduction_list[4], reproduction_list[5]], [reproduction_list[6], reproduction_list[7]],
+                  [reproduction_list[8], reproduction_list[9]], [reproduction_list[10], reproduction_list[11]],
+                  [reproduction_list[12], reproduction_list[13]], [reproduction_list[14], reproduction_list[15]]])
+      node_list[str([grid[4], grid[5]])] = grid[3]
+      node_df.append([[grid[4], grid[5]], grid[3]])
   num = len(grid)
 
 
@@ -146,7 +170,8 @@ def insert_generation():
     connection.commit()
     connection.close()
 
-def grid_maker(reproduction_list):
+def grid_maker():
+  global grid, reproduction_list, series, side, list_length
   grid = []
   cell_x = 0
   cell_y = 0
@@ -166,21 +191,26 @@ def grid_maker(reproduction_list):
                     int((cell_x + i % side) + 1), int((cell_y - i//side) + 1)))
 
 
-def generation_maker(generations):
-  while generations == 0:
-    break
-  else:
-    grid_maker(reproduction_list)
-    generation_maker(generations - 1)
+# def generation_maker(generations):
+#   global grid, reproduction_list
+#   while generations == 0:
+#     break
+#   else:
+#     grid_maker()
+#     print(grid[0])
+#     make_new_frame()
+#     build_grid()
+#     search_eight()
+#     insert_generation()
+#     generation_maker(generations - 1)
 
-    insert_generation()
-    print(generations)
 
-build_grid()
-search_eight()
+if len(reproduction_list) > 0:
+  print("Yes")
+else:
+  grid = []
+  build_grid()
+  search_eight()
+  insert_root()
+  insert_generation()
 
-
-# insert_root()
-generation_maker(generations)
-
-print(len(grid))
