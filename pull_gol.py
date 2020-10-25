@@ -13,7 +13,7 @@ load_dotenv()
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 
 # Set number of generations
-generations = 10
+generations = 1
 reproduction_list = []
 
 # Pulls initial seed from db
@@ -190,27 +190,29 @@ def grid_maker():
                     int((cell_x + i % side)), int((cell_y - i//side) + 1),
                     int((cell_x + i % side) + 1), int((cell_y - i//side) + 1)))
 
-
-# def generation_maker(generations):
-#   global grid, reproduction_list
-#   while generations == 0:
-#     break
-#   else:
-#     grid_maker()
-#     print(grid[0])
-#     make_new_frame()
-#     build_grid()
-#     search_eight()
-#     insert_generation()
-#     generation_maker(generations - 1)
+grid = []
+build_grid()
+search_eight()
+insert_root()
+insert_generation()
 
 
-if len(reproduction_list) > 0:
-  print("Yes")
-else:
-  grid = []
-  build_grid()
-  search_eight()
-  insert_root()
-  insert_generation()
+def kill_node():
+  global node_list, node_df
+  node_list = {}
+  node_df = []
+
+print("Grid:\n\n\n", grid[4][4])
+for i in range(generations):
+    kill_node()
+    print("\n\n\n\n\n\n\n\n\n\n", grid[4][4])
+    for j in range(len(grid)):
+      print("\n\n\nGrid[j][4]: ", grid[j][4], "\n\n\nReproduction List[j]: ", reproduction_list[j])
+      grid[j][4] = reproduction_list[j]
+      print("\n\n\nAdjusted Grid[j][4]: ", grid[j][4])
+      node_list[str([grid[j][5], grid[j][6]])] =  grid[j][4]
+      node_df.append([[str([grid[j][5], grid[j][6]])], grid[j][4]])
+
+    search_eight()
+    insert_generation()
 
