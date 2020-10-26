@@ -16,6 +16,7 @@ MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 DB_NAME = 'game_of_life_data'
 
 sql ='''CREATE TABLE game_output(
+Date INT NOT NULL AUTO_INCREMENT,
 c0 INT NOT NULL,
 c1 INT NOT NULL,
 c2 INT NOT NULL,
@@ -640,7 +641,8 @@ c620 INT NOT NULL,
 c621 INT NOT NULL,
 c622 INT NOT NULL,
 c623 INT NOT NULL,
-c624 INT NOT NULL
+c624 INT NOT NULL,
+PRIMARY KEY(Date)
 );'''
 
 connection = mysql.connector.connect(host='localhost',

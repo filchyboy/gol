@@ -25,7 +25,7 @@ MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 # number
 
 seed(1)
-length = 7
+length = 670
 
 # Grid_values sets the list as containing 1 or 0
 # with an initial list length of the preceding
@@ -60,7 +60,7 @@ def close_db():
 
 values_for_insertion = []
 for i in range(list_length):
-    values_for_insertion.append((series, list_length, side, int(grid_values[i]), int(cell_x + i % side), int(cell_y - i//side), 
+    values_for_insertion.append((i, series, list_length, side, int(grid_values[i]), int(cell_x + i % side), int(cell_y - i//side), 
                            int((cell_x + i % side) + 1), int(cell_y - i//side), 
                            int((cell_x + i % side) + 1), int((cell_y - i//side) - 1),
                            int(cell_x + i % side), int((cell_y - i//side) - 1),
@@ -70,7 +70,7 @@ for i in range(list_length):
                            int((cell_x + i % side)), int((cell_y - i//side) + 1),
                            int((cell_x + i % side) + 1), int((cell_y - i//side) + 1)))
 
-sql = "INSERT INTO GOL_data (Series, Length, Side, Node_Value, Node_X, Node_Y, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, x6, y6, x7, y7, x8, y8) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+sql = "INSERT INTO GOL_data (i, Series, Length, Side, Node_Value, Node_X, Node_Y, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, x6, y6, x7, y7, x8, y8) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
 cursor.executemany(sql, values_for_insertion)
 connection.commit()
