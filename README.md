@@ -51,5 +51,11 @@ Please note that this exercise quickly ran against inherent limitations to DB st
 
 ### Analyzing the Results
 
-![](https://www.dropbox.com/s/tnk6m4ojyadp4qh/Screen%20Shot%202020-10-26%20at%205.39.04%20PM.png?dl=0)
+Here's a screen shot of the total live cells at each generation:
+
+![](https://github.com/filchyboy/gol/raw/main/Screen_Shot_2020-10-26_at_5.37.08_PM.png)
+
+And here's a screen shot of the number of cells which have not changed their status at each generation:
+
+
 
