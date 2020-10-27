@@ -43,6 +43,14 @@ Next, I add to this sequence a host of accompanying data points that show each c
 
 TODO: Enable a series of seeds. Currently, all of this is manual. This step will come as part of a deployment build. There will be a toggled control to choose a specific seed for analysis.
 
+### Creating Specific Monster Instances
+
+This architecture allows for the inclusion of specific types of "monsters" added to the initialized data through specific data sets. These simply need to be imported forst into the GOL_data DB.
+
+### Reversing Time in the Game of Life
+
+Once the initial cell states are processed not only does the plotly dash app through callbacks allow for the generation growth to be rolled backwards but prior to that a reverse function can allow for the entire dataset to be reversed thus mimicing time going backwards.
+
 ### Running Through Generations of the Game of Life
 
 In the generator portion of this project, I retrieve the initial cell states list from the DB and begin matching the cell node values from each of the surrounding eight coordinates to tabulate a total number of live cells around each node. Then the rules of life are applied, and the individual cell node reflects the new state of `1` or `0`.  This new sequence, added to the database, then goes through the same steps until the set generations limit.
