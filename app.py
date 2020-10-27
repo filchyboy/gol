@@ -114,8 +114,8 @@ def pull_generation():
 pull_generation()
 
 
-fig = px.scatter(df, x="Date", y="Cell_Node_Total", labels=dict(Cell_Node_Total="Total Live Cells", Date="Generations"))
-# fig = px.scatter(df, x="Date", y="Cell_Change", labels=dict(Cell_Change="Number of Individual Cells Which Have Evolved", Date="Generations"))
+# fig = px.scatter(df, x="Date", y="Cell_Node_Total", labels=dict(Cell_Node_Total="Total Live Cells", Date="Generations"))
+fig = px.scatter(df, x="Date", y="Cell_Change", labels=dict(Cell_Change="Number of Individual Cells Which Have Evolved", Date="Generations"))
 
 
 

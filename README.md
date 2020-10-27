@@ -49,3 +49,7 @@ In the generator portion of this project, I retrieve the initial cell states lis
 
 Please note that this exercise quickly ran against inherent limitations to DB structures. This exercise currently handles no more than 625 cells as each cell is assigned a unique DB feature. Any number of cells above the number easily handled by MySQL will require a change in the data store.
 
+### Analyzing the Results
+
+![](https://www.dropbox.com/s/tnk6m4ojyadp4qh/Screen%20Shot%202020-10-26%20at%205.39.04%20PM.png?dl=0)
+

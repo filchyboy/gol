@@ -167,9 +167,6 @@ search_eight()
 # Adds seed as first row of db
 insert_root()
 
-# This can probably be removed
-# insert_generation()
-
 # This runs through each generation and adds a new row of the
 # output to the db. TODO tuck this into a function through insert_root
 for i in range(generations):
