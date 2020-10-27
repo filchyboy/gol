@@ -51,11 +51,16 @@ Please note that this exercise quickly ran against inherent limitations to DB st
 
 ### Analyzing the Results
 
+
 Here's a screen shot of the total live cells at each generation:
 
 ![](https://github.com/filchyboy/gol/raw/main/Screen_Shot_2020-10-26_at_5.37.08_PM.png)
 
-And here's a screen shot of the number of cells which have not changed their status at each generation:
+And here's a screen shot of the number of cells which have not evolved at each generation:
+
+![](https://github.com/filchyboy/gol/raw/main/Screen%20Shot%202020-10-26%20at%205.47.40%20PM.png)
+
+At the most basic level the data analyzation is being presented through a plotly dash application. Currently this is a proof of concept. In future iterations this dashboard into the data will become more verbose and will incorporate callbacks to handle time sequence and other parameters.
 
 
 
