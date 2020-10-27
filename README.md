@@ -49,6 +49,8 @@ In the generator portion of this project, I retrieve the initial cell states lis
 
 Please note that this exercise quickly ran against inherent limitations to DB structures. This exercise currently handles no more than 625 cells as each cell is assigned a unique DB feature. Any number of cells above the number easily handled by MySQL will require a change in the data store.
 
+TODO: Explore using NoSQL as a data store. The initial data could be potentially a million digits long and still be possible to generate and analyze.
+
 ### Analyzing the Results
 
 
